@@ -3,7 +3,7 @@ from flask_cors import CORS
 from interface.livro_controller import LivroController
 
 # template_folder='.' busca os arquivos HTML na raiz do repositório no Azure
-app = Flask(__name__, template_folder='.')
+app = Flask(__name__)
 
 # CORS libera o acesso do Front-end (rodando no navegador) ao Back-end
 CORS(app)
