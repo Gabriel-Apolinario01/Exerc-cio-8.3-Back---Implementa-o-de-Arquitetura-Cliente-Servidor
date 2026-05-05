@@ -2,7 +2,7 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 from interface.livro_controller import LivroController
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='.')
 # O CORS é obrigatório na Arquitetura Cliente-Servidor para liberar o acesso do Front-end
 CORS(app)
 
