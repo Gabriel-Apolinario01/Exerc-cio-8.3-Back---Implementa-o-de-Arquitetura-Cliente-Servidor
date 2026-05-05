@@ -6,7 +6,7 @@ from interface.livro_controller import LivroController
 app = Flask(__name__)
 
 # CORS libera o acesso do Front-end (rodando no navegador) ao Back-end
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 controller = LivroController()
 
