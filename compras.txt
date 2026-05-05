@@ -1,0 +1,5 @@
+Python,50.0
+Python,50
+Engenharia,70
+Engenharia,70
+Morro,50
