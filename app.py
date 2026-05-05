@@ -2,30 +2,28 @@ from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 from interface.livro_controller import LivroController
 
-# O template_folder='.' é essencial porque seus arquivos estão na raiz
+# O template_folder='.' busca os arquivos HTML na raiz do repositório
 app = Flask(__name__, template_folder='.')
 CORS(app)
 
 controller = LivroController()
 
-# --- ROTAS DE NAVEGAÇÃO (Para abrir as páginas HTML) ---
+# --- NAVEGAÇÃO (Caminhos para o navegador abrir as páginas) ---
 
 @app.route("/")
 def index():
-    # Agora a página inicial carrega o seu index.html em vez de um JSON
     return render_template('index.html')
 
 @app.route("/compra")
 def pagina_compra():
-    # Essa rota resolve o problema de o compra.html não abrir
     return render_template('compra.html')
 
 @app.route("/compras")
 def pagina_historico():
-    # Essa rota resolve o problema de o compras.html não abrir
     return render_template('compras.html')
 
-# --- ROTAS DE API (Para processar os dados dos livros) ---
+
+# --- API (Caminhos que o JavaScript usa para pegar dados) ---
 
 @app.route("/api/livros", methods=['GET'])
 def listar_livros():
@@ -39,16 +37,23 @@ def listar_livros():
         })
     return jsonify(livros_json)
 
+# CORREÇÃO AQUI: Adicionado <int:id> para o Flask receber o número do livro
 @app.route("/api/comprar/<int:id>", methods=['POST', 'GET'])
 def comprar(id):
     livros = controller.listar_livros()
+
     if id < 0 or id >= len(livros):
         return jsonify({"erro": "Livro não encontrado"}), 404
+
     livro = livros[id]
     controller.comprar_livro(livro.nome, livro.preco)
+
     return jsonify({
         "mensagem": "Compra realizada com sucesso!",
-        "livro": {"nome": livro.nome, "preco": livro.preco}
+        "livro": {
+            "nome": livro.nome,
+            "preco": livro.preco
+        }
     })
 
 @app.route("/api/compras", methods=['GET'])
@@ -62,6 +67,7 @@ def listar_compras():
         })
     return jsonify({"historico_compras": compras_json})
 
+
 if __name__ == "__main__":
-    # Configuração necessária para rodar corretamente no Azure
+    # O host '0.0.0.0' garante que o Azure consiga "enxergar" a aplicação
     app.run(host='0.0.0.0', port=5000)
