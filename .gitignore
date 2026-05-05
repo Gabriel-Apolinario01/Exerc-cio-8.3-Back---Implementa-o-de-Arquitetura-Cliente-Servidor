@@ -1,0 +1,13 @@
+# Pastas de configuracao do PyCharm e outras IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Arquivos temporarios do Windows e Mac
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Log files
+*.log
