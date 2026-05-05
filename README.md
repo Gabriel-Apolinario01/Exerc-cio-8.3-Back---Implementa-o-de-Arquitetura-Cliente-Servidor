@@ -5,7 +5,7 @@ Este repositorio contem a API Back-end do sistema de livraria, desenvolvida em P
 Aviso: Este e apenas o repositorio do Back-end. O Cliente (Front-end independente construido com HTML/JS) deve ser executado separadamente para consumir esta API.
 
 ## Tecnologias Utilizadas
-* Python 3.x
+* Python 3.11
 * Flask: Microframework para criacao da API REST.
 * Flask-CORS: Biblioteca utilizada para permitir as requisicoes (Cross-Origin) vindas do Front-end independente.
 * Manipulacao de TXT: Persistencia de dados (historico de compras) utilizando arquivos de texto para simular um banco de dados.
