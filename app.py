@@ -1,33 +1,28 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify
 from flask_cors import CORS
 from interface.livro_controller import LivroController
 
-# O template_folder='.' busca os arquivos HTML na raiz do repositório
-app = Flask(__name__, template_folder='.')
+app = Flask(__name__)
+# O CORS é obrigatório na Arquitetura Cliente-Servidor para liberar o acesso do Front-end
 CORS(app)
 
 controller = LivroController()
 
-# --- NAVEGAÇÃO (Caminhos para o navegador abrir as páginas) ---
 
-@app.route("/")
-def index():
-    return render_template('index.html')
-
-@app.route("/compra")
-def pagina_compra():
-    return render_template('compra.html')
-
-@app.route("/compras")
-def pagina_historico():
-    return render_template('compras.html')
+# Rota Base: Evita o erro 404 e avisa que a API está online
+@app.route("/", methods=['GET'])
+def home():
+    return jsonify({
+        "mensagem": "API da Livraria rodando perfeitamente!",
+        "dica": "Acesse /api/livros para ver o catálogo de livros."
+    })
 
 
-# --- API (Caminhos que o JavaScript usa para pegar dados) ---
-
+# Rota 1: Retorna o catálogo de livros
 @app.route("/api/livros", methods=['GET'])
 def listar_livros():
     livros_objetos = controller.listar_livros()
+
     livros_json = []
     for index, livro in enumerate(livros_objetos):
         livros_json.append({
@@ -35,9 +30,11 @@ def listar_livros():
             "nome": livro.nome,
             "preco": livro.preco
         })
+
     return jsonify(livros_json)
 
-# CORREÇÃO AQUI: Adicionado <int:id> para o Flask receber o número do livro
+
+# Rota 2: Processa a compra de um livro
 @app.route("/api/comprar/<int:id>", methods=['POST', 'GET'])
 def comprar(id):
     livros = controller.listar_livros()
@@ -46,6 +43,7 @@ def comprar(id):
         return jsonify({"erro": "Livro não encontrado"}), 404
 
     livro = livros[id]
+
     controller.comprar_livro(livro.nome, livro.preco)
 
     return jsonify({
@@ -56,18 +54,22 @@ def comprar(id):
         }
     })
 
+
+# Rota 3: Retorna o histórico de compras CORRIGIDO PARA OBJETOS
 @app.route("/api/compras", methods=['GET'])
 def listar_compras():
     compras_objetos = controller.listar_compras()
+
     compras_json = []
     for compra in compras_objetos:
+        # Como o seu Clean Architecture já devolve objetos, é só pegar os atributos direto:
         compras_json.append({
             "nome": compra.nome,
             "preco": compra.preco
         })
+
     return jsonify({"historico_compras": compras_json})
 
 
 if __name__ == "__main__":
-    # O host '0.0.0.0' garante que o Azure consiga "enxergar" a aplicação
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True, port=5000)
